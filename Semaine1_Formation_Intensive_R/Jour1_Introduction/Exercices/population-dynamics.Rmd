@@ -41,9 +41,6 @@ spreadsheet-like view.
 
 ```{r}
 ## load the data set
-Sweden <- read.csv("data/Sweden.csv")
-Kenya <- read.csv("data/Kenya.csv")
-World <- read.csv("data/World.csv")
 ```
 
 ## Question 1
@@ -75,10 +72,12 @@ The CBR is easy to understand but contains both men and women
    range $[15, 50)$.  The ASFR for age range $[x, x+\delta)$, where
    $x$ is the starting age and $\delta$ is the width of the age range
    (measured in years), is defined as:
+   
   $$
     \text{ASFR}_{[x,\ x+\delta)} 
     \ = \ \frac{\text{number of births to women of age $[x,\ x+\delta)$}}{\text{Number of person-years lived by women of age $[x,\ x+\delta)$}}
   $$
+  
   Note that square brackets, $[$ and $]$, include the limit whereas
   parentheses, $($ and $)$, exclude it.  For example, $[20, 25)$
   represents the age range that is greater than or equal to 20 years
