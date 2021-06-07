@@ -1,6 +1,6 @@
 ---
 title: 'Exercice 1: Comprendre la dynamique des populations'
-author: "Visseho Adjiwanou, PhD."
+author: "Miranda Melson"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   pdf_document: default
@@ -46,8 +46,8 @@ World <- read.csv("World.csv")
 
 
 head(Sweden)
-
-
+head(Kenya)
+head(World)
 ```
 
 ### QUESTION 1
@@ -102,7 +102,7 @@ compare_tbn
 
 ### Votre interprétation
 
-
+I notice that the highest crude birth rate (tbn : le taux brut de natalité) for Kenya period 1 is for 20-24 year-olds. This is the same age group for Kenya period 2, but a lower rate than in period 1. Kenya has the highest TBN of the countries. Sweden has a lower rate compared to the world and Kenya. In general, most of the peaks are seen at ages 20-24 but during the second period there are also higher rates among other age groups like 30-34 year-olds for sweden period 2 or 25-29 year-olds for the world period 1. They follow the normal "bell-curve" trend.
 
 
 ## QUESTION 2
@@ -114,15 +114,14 @@ Stockez les résultats du TBN sous forme de matrice de dimension (2, 3), 2 étan
 ### Réponse 2
 
 ```{r}
-
-
-
-
-
+tbn_matrice <- matrix(c(sum(tbn_kenya_p1), sum(tbn_kenya_p2), sum(tbn_sweden_p1), sum(tbn_sweden_p2), sum(tbn_world_p1),sum(tbn_world_p2)), nrow=2, ncol=3)
+rownames(tbn_matrice) <- c("1950-1955", "2005-2010")
+colnames(tbn_matrice) <- c("Kenya", "Sweden", "World")
+tbn_matrice
 ```
 
 ### Votre interprétation
-
+This is much more clear than earlier that period one had a higher crude birth rate than period 2 for all countries. Kenya has a higher crude birth rate compared to the world and Sweden, while Sweden has a lower crude birth rate than the world (and Kenya).
 
 ## QUESTION 3
 
@@ -132,6 +131,9 @@ Le TBN est facile à comprendre mais pose des problèmes de comparaisons. Pourqu
 
 ### Réponse 3
 
+NB: J'ai remarqué que l'exercise 1 en anglais n'a pas cette question. Je regarde les deux et je ne comprends pas pourquoi ils sont différents.
+
+This way of displaying the TBN does not explain it by age group or by gender. 
 
 
 
@@ -148,49 +150,95 @@ Calculer ce taux pour le Kenya, la Suède et le Monde. Présenter les résultats
 ### Réponse 4
 
 ```{r}
+kenya_p1_tgf <- kenya_p1 %>% filter(age == "15-19"|age == "20-24"|age == "25-29"|age == "30-34"|age == "35-39"|age == "40-44"|age == "45-49")
+kenya_p2_tgf <- kenya_p2 %>% filter(age == "15-19"|age == "20-24"|age == "25-29"|age == "30-34"|age == "35-39"|age == "40-44"|age == "45-49")
 
+sweden_p1_tgf <- sweden_p1 %>% filter(age == "15-19"|age == "20-24"|age == "25-29"|age == "30-34"|age == "35-39"|age == "40-44"|age == "45-49")
+sweden_p2_tgf <- sweden_p2 %>% filter(age == "15-19"|age == "20-24"|age == "25-29"|age == "30-34"|age == "35-39"|age == "40-44"|age == "45-49")
 
+world_p1_tgf <- world_p1 %>% filter(age == "15-19"|age == "20-24"|age == "25-29"|age == "30-34"|age == "35-39"|age == "40-44"|age == "45-49")
+world_p2_tgf <- world_p2 %>% filter(age == "15-19"|age == "20-24"|age == "25-29"|age == "30-34"|age == "35-39"|age == "40-44"|age == "45-49")
+
+tgf <- function(y){
+  b <- y[,4]
+  f <- y[,7]
+  b/f
+}
+
+tgf_kenya_p1 <- tgf(kenya_p1_tgf)
+tgf_kenya_p2 <- tgf(kenya_p2_tgf)
+
+tgf_sweden_p1 <- tgf(sweden_p1_tgf)
+tgf_sweden_p2 <- tgf(sweden_p2_tgf)
+
+tgf_world_p1 <- tgf(world_p1_tgf)
+tgf_world_p2 <- tgf(world_p2_tgf)
+
+tgf_matrice <- matrix(c(sum(tgf_kenya_p1), sum(tgf_kenya_p2), sum(tgf_sweden_p1), sum(tgf_sweden_p2), sum(tgf_world_p1),sum(tgf_world_p2)), nrow=2, ncol=3)
+rownames(tgf_matrice) <- c("1950-1955", "2005-2010")
+colnames(tgf_matrice) <- c("Kenya", "Sweden", "World")
+tgf_matrice
 ```
 
 ### Votre interprétation
 
-
+While TGF results are similar to TBN results, they are less skewed and both Kenya and Sweden are more similar to the world now.
 
 ## QUESTION 5
 
-Pour remédier à ces problèmes, nous calculons l'*indice synthétique de fécondité* (ISF). Contrairement au TBN, l'ISF s'ajuste en fonction de la composition par âge de la population féminine en âge de procréer. Pour ce faire, nous devons d'abord calculer le *taux de fécondité par âge* (TFA), qui représente le taux de fécondité chez les femmes en âge de procréer `[15, 50]`. Le TFA pour la tranche d'âge [x, x + $\delta$) , où `x` est l'âge de départ et $\delta$ la largeur de la tranche d'âge (mesurée en années), est défini comme suit:
+Pour remédier à ces problèmes, nous calculons l'*indice synthétique de fécondité* (ISF). Contrairement au TBN, l'ISF s'ajuste en fonction de la composition par âge de la population féminine en âge de procréer. Pour ce faire, nous devons d'abord calculer le *taux de fécondité par âge* (isf), qui représente le taux de fécondité chez les femmes en âge de procréer `[15, 50]`. Le isf pour la tranche d'âge [x, x + $\delta$) , où `x` est l'âge de départ et $\delta$ la largeur de la tranche d'âge (mesurée en années), est défini comme suit:
 
   $$
-    \text{TFA}_{[x,\ x+\delta)} 
-    \ = \ \frac{\text{Nombre de naissances des femmes âgées de $[x,\ x+\delta)$}}{\text{Nombre de personnes-années vécues par les femmes âgées $[x,\ x+\delta)$}}
+    \text{isf}_{[x,\ x+\delta)} 
+    \ = \ \frac{\text{Nombre de naissances des femmes âgées de $[x,\ x+\delta)$}}{\text{Nombre de personnes-années vécues par les femmes âgées $[x,\                x+\delta)$}}
   $$
 
 Notez que les crochets, `[ , ]`, incluent la limite alors que les parenthèses, `( , )`, l'excluent. Par exemple, `[20, 25)` représente la tranche d’âge supérieure ou égale à 20 ans et inférieure à 25 ans. Dans les données démographiques typiques, la tranche d'âge $\delta$ est fixée à 5 ans.
 
-Calculez le taux de fécondité par âge pour la Suède et le Kenya ainsi que pour le monde entier pour chacune des deux périodes. Stockez les TFA résultants séparément pour chaque région. Interpréter ces résultats. Comment devrez-vous présenter ces résultats pour une interprétation optimale? 
+Calculez le taux de fécondité par âge pour la Suède et le Kenya ainsi que pour le monde entier pour chacune des deux périodes. Stockez les isf résultants séparément pour chaque région. Interpréter ces résultats. Comment devrez-vous présenter ces résultats pour une interprétation optimale? 
 
 
 ### Réponse 5
 
 ```{r}
+isf <- function(a){
+  x <- min(a[,4])
+  d <- 5
+  tfa <- a[x, x+d]
+  birth <- a[,4]
+  women.py <- a[,6]
+  birth[tfa]/women.py[tfa]
+}
 
+isf_kenya_p1 <- isf(kenya_p1_tgf)
+isf_kenya_p2 <- isf(kenya_p2_tgf)
 
+isf_sweden_p1 <- isf(sweden_p1_tgf)
+isf_sweden_p2 <- isf(sweden_p2_tgf)
+
+isf_world_p1 <- isf(world_p1_tgf)
+isf_world_p2 <- isf(world_p2_tgf)
+
+isf_matrice <- matrix(c(sum(isf_kenya_p1), sum(isf_kenya_p2), sum(isf_sweden_p1), sum(isf_sweden_p2), sum(isf_world_p1),sum(isf_world_p2)), nrow=2, ncol=3)
+rownames(isf_matrice) <- c("1950-1955", "2005-2010")
+colnames(isf_matrice) <- c("Kenya", "Sweden", "World")
+isf_matrice
 ```
 
 ### Votre interprétation
 
-
+I attempted to create this function but was unable to do so unfortunately.
 
 
 
 ## QUESTION 6
 
-En utilisant le TFA, nous pouvons définir l’ISF comme le nombre moyen d’enfants que les femmes mettent au monde si elles vivent tout au long de leur vie reproductive.
+En utilisant le isf, nous pouvons définir l’ISF comme le nombre moyen d’enfants que les femmes mettent au monde si elles vivent tout au long de leur vie reproductive.
 
  $$
   \text{ISF} 
-   =   \text{TFA}_{[15,\ 20)} \times 5 + \text{TFA}_{[20,\ 25)} \times 5 
-  + \dots + \text{TFA}_{[45,\ 50)} \times 5
+   =   \text{isf}_{[15,\ 20)} \times 5 + \text{isf}_{[20,\ 25)} \times 5 
+  + \dots + \text{isf}_{[45,\ 50)} \times 5
   $$
 Nous multiplions chaque taux de fécondité par âge par 5 car la tranche d'âge est de 5 ans. Calculez l'ISF pour la Suède et le Kenya ainsi que le monde entier pour chacune des deux périodes. Comme dans la question précédente, continuer à supposer que la tranche d'âge en âge de procréer des femmes est de `[15, 50)`. Stockez les deux ISF résultants pour chaque pays et le monde en tant que matrice de dimension (2, 3). En général, comment est-ce que l'indice synthétique de fécondité a-t-il évolué au cours de la période de 1950 à 2000 dans le monde? Commentez les résultats de la Suède et du Kenya. 
 
@@ -199,12 +247,28 @@ Nous multiplions chaque taux de fécondité par âge par 5 car la tranche d'âge
 ### Réponse 6
 
 ```{r}
+isft <- function(z){
+  sum(z[15,50] * 5)
+}
 
+isft_kenya_p1 <- isft(kenya_p1_tgf)
+isft_kenya_p2 <- isft(kenya_p2_tgf)
 
+isft_sweden_p1 <- isft(sweden_p1_tgf)
+isft_sweden_p2 <- isft(sweden_p2_tgf)
+
+isft_world_p1 <- isft(world_p1_tgf)
+isft_world_p2 <- isft(world_p2_tgf)
+
+isft_matrice <- matrix(c(sum(isft_kenya_p1), sum(isft_kenya_p2), sum(isft_sweden_p1), sum(isft_sweden_p2), sum(isft_world_p1),sum(isft_world_p2)), nrow=2, ncol=3)
+rownames(isft_matrice) <- c("1950-1955", "2005-2010")
+colnames(isft_matrice) <- c("Kenya", "Sweden", "World")
+isft_matrice
 ```
 
 ### Votre interprétation
 
+Same issue as the last problem.
 
 \newpage
 
