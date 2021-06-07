@@ -38,6 +38,7 @@ Ce code vous permet de charger directement les données. Vous devez télécharge
 ```{r}
 
 ## Telecharger les données
+setwd("C:/Users/mmels/OneDrive/Desktop/sicss_montreal/Cours_SICSS_Montreal/Semaine1_Formation_Intensive_R/Jour1_Introduction/Données")
 
 Sweden <- read.csv("Sweden.csv")
 Kenya <- read.csv("Kenya.csv")
