@@ -66,7 +66,37 @@ Calculez le TBN pour chaque période, séparément pour le Kenya, la Suède et l
 ### Réponse 1
 
 ```{r}
+library(dplyr)
 
+kenya_p1 <- Kenya %>% filter(period == "1950-1955")
+kenya_p2 <- Kenya %>% filter(period == "2005-2010")
+
+sweden_p1 <- Sweden %>% filter(period == "1950-1955")
+sweden_p2 <- Sweden %>% filter(period == "2005-2010")
+
+world_p1 <- World %>% filter(period == "1950-1955")
+world_p2 <- World %>% filter(period == "2005-2010")
+
+
+tbn <- function(x){
+  b <- x[,4]
+  p <- x[,6] + x[,7]
+  b/p
+}
+
+tbn_kenya_p1 <- tbn(kenya_p1)
+tbn_kenya_p2 <- tbn(kenya_p2)
+
+tbn_sweden_p1 <- tbn(sweden_p1)
+tbn_sweden_p2 <- tbn(sweden_p2)
+
+tbn_world_p1 <- tbn(world_p1)
+tbn_world_p2 <- tbn(world_p2)
+
+compare_tbn <- rbind(tbn_kenya_p1, tbn_kenya_p2, tbn_sweden_p1, tbn_sweden_p2, tbn_world_p1, tbn_world_p2)
+colnames(compare_tbn) <- c("0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-69", "70-79", "80+")
+
+compare_tbn
 ```
 
 
