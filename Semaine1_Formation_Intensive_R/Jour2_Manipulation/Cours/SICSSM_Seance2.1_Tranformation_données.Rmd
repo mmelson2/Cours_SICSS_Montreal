@@ -90,9 +90,7 @@ summary(UNpop)
 - Il renvoie un vecteur contenant la variable spécifiée.
 
 ```{r}
-
 UNpop[c(1, 2, 3), ]
-
 ```
 
 
