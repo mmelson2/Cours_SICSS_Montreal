@@ -161,7 +161,7 @@ Maintenant, il faut charger les données que vous voulez utiliser dans R. Ici, o
 
 
 ```{r}
-
+setwd("C:/Users/mmels/OneDrive/Desktop/Cours_SICSS_Montreal/Semaine1_Formation_Intensive_R/Jour2_Manipulation/Données")
 crsc96 <- read_csv("../Données/cora-crsc1996-E-1996_F1.csv")
 
 ```
@@ -171,10 +171,10 @@ crsc96 <- read_csv("../Données/cora-crsc1996-E-1996_F1.csv")
 ```{r}
 # trois manière de faire
 
-#View(crsc96)
+View(crsc96)
 
 head(crsc96)
-#glimpse(crsc96)
+glimpse(crsc96)
 
 ```
 
@@ -354,7 +354,7 @@ L'une des modification les plus importantes pour une variable continue est le ca
 
 crsc96_small <-
   crsc96_small %>% 
-  mutate(age_standardise = (age - mean(age))/sqrt(age))
+  mutate(age_standardise = (age - mean(age))/sd(age))
 
 ```
 
