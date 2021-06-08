@@ -9,11 +9,28 @@ output:
 
 Ce Labo utilise le fichier de données classdata2021 fourni sous format .csv.
 
+
+
 ## Exercice 1
 
 1. Importer le fichier classdata2021.csv dans RStudio.
+```{r}
+setwd("C:/Users/mmels/OneDrive/Desktop/sicss_montreal/Cours_SICSS_Montreal/Semaine1_Formation_Intensive_R/Jour1_Introduction/Données")
+class_data <- read.csv("classdata2021.csv")
+
+head(class_data)
+```
+
 2. Quelles sont les dimensions de ce fichier de données ?
+
+# 162 rows (obs.) and 6 columns (variables)
+
 3. Obtenir un sous-ensemble du fichier contenant la 1ère et la 3ème colonne et de la 2ème à la 4ème ligne.
+
+```{r}
+sous_ensemble <- c(class_data[2,], class_data[4,], class_data[,1], class_data[,3])
+sous_ensemble
+```  
 
 ## Exercice 2
 
