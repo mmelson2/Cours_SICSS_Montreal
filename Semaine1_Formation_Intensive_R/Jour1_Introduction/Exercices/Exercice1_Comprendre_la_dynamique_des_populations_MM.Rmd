@@ -36,7 +36,7 @@ Les données sont collectées pour une période de 5 ans, où *personne-années*
 Ce code vous permet de charger directement les données. Vous devez télécharger les données de Moodle et les placer avec ce fichier Rmarkdown dans le même dossier (voir remarque en haut).
 
 ```{r}
-
+rm(list = ls())
 ## Telecharger les données
 setwd("C:/Users/mmels/OneDrive/Desktop/Cours_SICSS_Montreal/Semaine1_Formation_Intensive_R/Jour1_Introduction/Données")
 
