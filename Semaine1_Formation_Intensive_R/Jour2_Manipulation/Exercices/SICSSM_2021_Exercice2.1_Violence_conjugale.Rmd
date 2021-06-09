@@ -1,6 +1,6 @@
 ---
 title: "Exercice 2.1: Accès à l'information et attitudes face à la violence conjugale"
-author: "Visseho Adjiwanou, PhD."
+author: "Miranda Melson"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   pdf_document: default
@@ -59,7 +59,7 @@ rm(list = ls())     # Permet d'éffacer l'environnement
 library(tidyverse)
 
 #4. Ouvrir votre base de données
-dhs <- read.csv("dhs_ipv.csv")
+dhs <- read_csv("../Données/dhs_ipv.csv")
 
 ```
 
@@ -75,20 +75,26 @@ Votre base de données comprend combien d'observation et combien de variables ? 
 ### Votre réponse 
 
 ```{r}
-
+dim(dhs)
 ```
 
 ## Question 2
 
 Dites le type de chaque variable de la base de données. Comment est ce que R comprend ce type de variable? Présentez l'information dans un tableau.
 
-
 ### Votre réponse
 
 
 Variables          Type (statistique)           Type (R)
 ------------------ ---------------------------- ---------------------------
-beat_goesout
+beat_goesout        percent                     numeric
+beat_burnfood       percent                     numeric
+X                   person ID                   integer
+sec_school          percent                     numeric
+no_media            percent                     numeric
+country             country name                character
+year                number in year(s)           integer
+region              continent name              character
 
 
 ## Question 3
@@ -98,7 +104,14 @@ Quelle est le type de chaque variable de la base de données? Utiliser la foncti
 ### Votre réponse
 
 ```{r}
-
+class(dhs$X)
+class(dhs$beat_burnfood)
+class(dhs$beat_goesout)
+class(dhs$sec_school)
+class(dhs$no_media)
+class(dhs$country)
+class(dhs$year)
+class(dhs$region)
 ```
 
 ## Question 4
@@ -115,7 +128,15 @@ Je vous demande de créer 5 nouvelles bases de données avec les conditions suiv
 ### Votre réponse 
 
 ```{r}
+dhs1 <- dhs %>% filter(beat_goesout >= 14) # When 14% or greater of women think that it's justified to be beat for going out.
 
+dhs2 <- dhs %>% filter(beat_goesout > 13 & beat_burnfood < 22) # When more than 13% of women think that it's justified to be beat for going out and less than 22 % of women think it's justified to be beat for burning food.
+
+dhs3 <- dhs %>% filter(sec_school > 22 & beat_goesout > 25) # When more than 22% have an education of middle school or higher and more than 25% of women think it's justified to be beat for going out.
+
+dhs4 <- dhs %>% filter(region == "Sub-Saharan Africa" & beat_goesout >18 & sec_school > 10) # When more than 18% of Sub-Saharan African women think it's justified to be beat for going out and more than 10% of these women have a middle school or higher education.
+
+dhs5 <- dhs %>% filter(beat_goesout < 15 | beat_goesout > 22) # When less than 15% or more than 22% of women believe being beat for going out is justified (excluding 15-22% of women)
 ```
 
 ## Question 5
@@ -132,6 +153,24 @@ Créer des bases de données remplissant les conditions suivantes:
 ### Votre réponse 
 
 ```{r}
+dhs6 <- dhs %>% 
+  filter(country == "Cambodia" | country == "Cameroon" | country == "Chad" | country == "Colombia" | 
+  country == "Comoros" | country == "Congo (Brazzaville)" | country == "Congo Democratic Republic" | country == "Cote d'Ivoire")
+
+dhs7 <- dhs %>%
+  filter(country == "Burundi" | country == "Haiti" | country == "Malawi" | country == "Mali")
+
+summary(dhs$sec_school)
+dhs8 <- dhs %>%
+  filter(sec_school > 3.1)
+
+dhs9 <- dhs %>%
+  select(country, year) %>%
+  filter(year >= min(dhs$year)+2)
+
+dhs10 <- dhs %>%
+  group_by(country) %>%
+  filter(year == max(year))
 
 ```
 
@@ -154,6 +193,13 @@ Dans la base de données **dhs**, créer les variables suivantes:
 ### Votre réponse 
 
 ```{r}
+dhs <- dhs %>%
+  mutate(pays_riche = if_else(sec_school > 20 & no_media < 5, T, F)) %>%
+  mutate(beat_goesout_3 = case_when(
+    beat_goesout <= 10 ~ 1,
+    beat_goesout > 10 & beat_goesout <= 20 ~ 2,
+    beat_goesout > 20 ~ 3
+  ))
 
 ```
 
@@ -170,8 +216,15 @@ Sur la base des valeurs de la variable `beat_burnfood`, créer une nouvelles var
 ### Réponse 2
 
 ```{r}
+dhs <- dhs %>%
+  mutate(beat_burnfood_cat = factor(case_when(
+    beat_burnfood < 5 ~ "tres moderne",
+    beat_burnfood > 5 & beat_burnfood < 10 ~ "moderne",
+    beat_burnfood > 10 & beat_burnfood < 20 ~ "traditionnelle",
+    beat_burnfood > 20 ~ "tres traditionnelle")))
 
-
+class(dhs$beat_burnfood_cat)
+    
 ```
 
 
@@ -183,7 +236,7 @@ Sur la base des valeurs de la variable `beat_burnfood`, créer une nouvelles var
 Calculer les paramètres de **position** de la variable `beat-goesout`
 
 ```{r}
-
+summary(dhs$beat_goesout)
 ```
 
 ## Question 4
@@ -192,7 +245,9 @@ Faite le même calcul selon les régions d'études. Commentez les résultats.
 PS. Vous ne devez ajouter qu'une seule ligne de commande à votre code de la question 4 pour répondre à la question.
 
 ```{r}
+tapply(dhs$beat_goesout, dhs$country, summary)
 
+# Colombia has the minimum percentage of women who believe it's justified for their husbands to beat them for going out, while Guinea has the highest precentage. Averages, medians, etc. vary greatly depending on the nation.
 ```
 
 ## Question 5
@@ -200,7 +255,9 @@ PS. Vous ne devez ajouter qu'une seule ligne de commande à votre code de la que
 Calculer les paramètres de **dispersion** de la variable `beat-goesout`
 
 ```{r}
-
+var(dhs$beat_goesout, na.rm = T)
+sd(dhs$beat_goesout, na.rm = T)
+range(dhs$beat_goesout, na.rm = T)
 ```
 
 ## Question 6
@@ -209,7 +266,13 @@ Faite le même calcul selon les régions d'études. Commentez les résultats.
 PS. Vous ne devez ajouter qu'une seule ligne de commande à votre code de la question 4 pour répondre à la question.
 
 ```{r}
+tapply(dhs$beat_goesout, dhs$country, var)
 
+tapply(dhs$beat_goesout, dhs$country, sd)
+
+tapply(dhs$beat_goesout, dhs$country, range)
+
+# There is a lot more misssing data for these analyses and results appear to vary greatly.
 ```
 
 
@@ -220,10 +283,22 @@ PS. Vous ne devez ajouter qu'une seule ligne de commande à votre code de la que
 
 Y'a-t-il une association entre la variable `beat_goesout` et `sec_school`? quel type d'analyse vous permet de répondre à cette question?
 
+```{r}
+#ctable(dhs$beat_goesout, dhs$sec_school, "r")
+
+# normalement je fais une regression bivariate
+```
+
 ## Question 2
 
 Y'a-t-il une association entre la variable `beat_goesout` et `region`? quel type d'analyse vous permet de répondre à cette question?
 
+```{r}
+#ctable(dhs$beat_goesout, dhs$region, "r")
+
+# normalement je fais une regression bivariate, mais si, il y a une association
+
+```
 
 
 # Partie E: Création de votre propre base de données
@@ -245,6 +320,16 @@ Vous vous demandez d'où provient cette base de données. Et bien comme je vous 
 ### Votre réponse 
 
 ```{r}
+# Malawi
+
+# IV = Women with secondary or higher education
+# DV = Physical or sexual violence committed by husband/partner
+
+malawi <- read.csv("../Données/STATcompilerExport202168_19457.xlsx")
+
+# Il y a les variables nulls
+
+kenya <- read.csv("../Données/STATcompilerExport202168_194837.xlsx", fileEncoding = "UTF-8")
 
 ```
 

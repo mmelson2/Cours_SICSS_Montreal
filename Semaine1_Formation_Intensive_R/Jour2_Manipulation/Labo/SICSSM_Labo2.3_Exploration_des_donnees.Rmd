@@ -333,7 +333,7 @@ summary(Davis)
 
 ```
 
-Ce fichier comprend les informations sur le poids et la taille de 200 individues ainsi que leur poids et taille autodéclaré. On veut voir de quelle manière les poids auto-déclarés sont fiables. 
+Ce fichier les informations sur le poids et la taille de 200 individues ainsi que leur poids et taille autodéclaré. On veut voir de quelle manière les poids auto-déclarés sont fiables. 
 
 On ne l'a pas encore vu, mais on peut rapidement voir les variables deux par deux dans un graphique
 

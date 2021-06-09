@@ -1,6 +1,6 @@
 ---
 title: 'Exercice 2.2 : Indexation et fichier de données'
-author: "Visseho Adjiwanou, PhD."
+author: "Miranda Melson."
 date: "8/06/2021"
 output:
   beamer_presentation: default
@@ -13,15 +13,57 @@ Vous utiliserez le fichier de données **migration** fourni sous format **.csv.*
 ## Exercice 1
 
 1. Importer le fichier migration.csv dans RStudio.
+
+```{r}
+rm(list = ls())
+library(tidyverse)
+
+migration <- read.csv("../Données/migration.csv")
+```
+
 2. Changer les noms des variables **Value**, **INT** et **GEO** respectivement en **persons**, **type** et **location**
+```{r}
+names(migration)[6] <- "persons"
+names(migration)[3] <- "type"
+names(migration)[2] <- "location"
+```
+
 3. Créer un fichier de données **mig** filtrant les valeurs de l'Ontario et du Québec dont la migration trimestrielle (variable **persons**) est supérieure à la migration trimestrielle moyenne.
+
+```{r}
+mig <- migration %>%
+  filter(location == "Ontario" | location == "Quebec") %>%
+  arrange(desc(persons))
+
+```
 
 ## Exercice 2
 
 1. Dans le fichier **mig**, changer les valeurs de la variable **persons** de façon à ce que les valeurs soient négatives si le type de migration est **Out-migrants**.
+```{r}
+mig <- mig %>%
+  mutate(persons = as.factor(ifelse(type == "Out-migrants", -1 * mig$persons, mig$persons)))
+
+```
+
 2. A partir du fichier **mig**, créer une variable fictive (binaire) **out_mig** qui prend la valeur 1 si la migration trimestrielle est négative, puis compter le nombre d'observations correspondantes dans chaque province/territoire.
+
+mig <- mig %>%
+  mutate(out_mig = if_else(persons < 0, 1, 0)) %>%
+  count(location)
+
+
+mig <-
+  mig %>% 
+  mutate(out_mig = 1, case_when
+         (persons < 0 ~ 1)) %>% 
+  count(location)
+
+Cannot solve
 
 ## Exercice 3
 
 1. Dans le fichier **mig**, scinder la variable **Ref_Date** en deux variable **year** et **month**
+
+
 2. Calculer le minimum, le maximum et l'écart-type de la migration trimestrielle pour chaque année.
