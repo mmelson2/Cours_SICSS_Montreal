@@ -134,7 +134,7 @@ dhs2 <- dhs %>% filter(beat_goesout > 13 & beat_burnfood < 22) # When more than 
 
 dhs3 <- dhs %>% filter(sec_school > 22 & beat_goesout > 25) # When more than 22% have an education of middle school or higher and more than 25% of women think it's justified to be beat for going out.
 
-dhs4 <- dhs %>% filter(region == "Sub-Saharan Africa" & beat_goesout >18 & sec_school > 10) # When more than 18% of Sub-Saharan African women think it's justified to be beat for going out and more than 10% of these women have a middle school or higher education.
+dhs4 <- dhs %>% filter(region == "Sub-Saharan Africa" & beat_goesout > 18 & sec_school > 10) # When more than 18% of Sub-Saharan African women think it's justified to be beat for going out and more than 10% of these women have a middle school or higher education.
 
 dhs5 <- dhs %>% filter(beat_goesout < 15 | beat_goesout > 22) # When less than 15% or more than 22% of women believe being beat for going out is justified (excluding 15-22% of women)
 ```
@@ -157,16 +157,24 @@ dhs6 <- dhs %>%
   filter(country == "Cambodia" | country == "Cameroon" | country == "Chad" | country == "Colombia" | 
   country == "Comoros" | country == "Congo (Brazzaville)" | country == "Congo Democratic Republic" | country == "Cote d'Ivoire")
 
+# dhs6 <- dhs %>% filter(str_starts(country, "C"))
+
 dhs7 <- dhs %>%
   filter(country == "Burundi" | country == "Haiti" | country == "Malawi" | country == "Mali")
+
+# dhs7 <- dhs %>% filter(str_ends(country, "i"))
 
 summary(dhs$sec_school)
 dhs8 <- dhs %>%
   filter(sec_school > 3.1)
 
+# dhs8 <- dhs %>% filter(sec_school > mean(sec_school, na.rm = T))
+
 dhs9 <- dhs %>%
   select(country, year) %>%
   filter(year >= min(dhs$year)+2)
+
+# dhs91 <- dhs %>% group_by(country) %>% count(country) %>% filter(n >= 2)
 
 dhs10 <- dhs %>%
   group_by(country) %>%
